@@ -2,6 +2,7 @@
 using GamaEdtech.Back.FAQ.Domain.Common.InterfaceDependency;
 using GamaEdtech.Back.FAQ.Domain.DataAccess.Mapper.FAQ;
 using GamaEdtech.Back.FAQ.Infrastructure.Services.MediaServices;
+using System.Collections.Concurrent;
 
 namespace GamaEdtech.Back.FAQ.Application.Services.ApplicationServices.FileManagerService
 {
@@ -10,6 +11,7 @@ namespace GamaEdtech.Back.FAQ.Application.Services.ApplicationServices.FileManag
         public async Task<UploadFileResponse> UpladFiles(UploadFileRequest uploadFileRequest, string bucketName, CancellationToken cancellationToken)
         {
             var uploadFileResponse = new UploadFileResponse();
+            var concurrentUploadResponsePerProvider = new ConcurrentBag<UploadResponsePerProvider>();
 
             var uploaderTasks = fileUploaders.Where(c => uploaderNames.Any(a => a == c.UploaderProviderName))
             .Select(s => (s.UploaderProviderName, UploadTask: s.UploadFile(uploadFileRequest, bucketName, cancellationToken)));
@@ -17,13 +19,14 @@ namespace GamaEdtech.Back.FAQ.Application.Services.ApplicationServices.FileManag
             foreach (var (UploaderName, UploadTask) in uploaderTasks)
             {
                 var result = await UploadTask;
-                uploadFileResponse.uploadResponsePerProviders.Add(new UploadResponsePerProvider
+                concurrentUploadResponsePerProvider.Add(new UploadResponsePerProvider
                 {
                     UploadFileResult = result,
                     UploaderName = UploaderName
 
                 });
             }
+            uploadFileResponse.uploadResponsePerProviders.AddRange([.. concurrentUploadResponsePerProvider]);
             return uploadFileResponse;
         }
     }
