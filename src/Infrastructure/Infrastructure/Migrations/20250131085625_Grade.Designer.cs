@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+using NetTopologySuite.Geometries;
+
 #nullable disable
 
 namespace GamaEdtech.Infrastructure.Migrations
@@ -689,7 +691,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("LastModifyUserId");
 
-                    b.Property<string>("Location")
+                    b.Property<Point>("Location")
                         .IsRequired()
                         .HasColumnType("geometry")
                         .HasColumnName("Location");

@@ -1,6 +1,8 @@
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+using NetTopologySuite.Geometries;
+
 #nullable disable
 
 namespace GamaEdtech.Infrastructure.Migrations
@@ -22,7 +24,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                     StateId = table.Column<int>(type: "int", nullable: false),
                     ZipCode = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Location = table.Column<string>(type: "geometry", nullable: false),
+                    Location = table.Column<Point>(type: "geometry", nullable: false),
                     CreationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreationUserId = table.Column<int>(type: "int", nullable: false),
                     LastModifyDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
