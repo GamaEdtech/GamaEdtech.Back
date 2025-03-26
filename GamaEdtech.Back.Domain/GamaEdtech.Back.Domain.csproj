@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="12.4.0" />
+		<PackageReference Include="Ardalis.Specification" Version="8.0.0" />
+		<PackageReference Include="Mapster" Version="7.4.1-pre01" />
+		<PackageReference Include="NetTopologySuite" Version="2.6.0" />
+		<PackageReference Include="Pluralize.NET" Version="1.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Entities\EntityVersion\Aggregates\" />
+	  <Folder Include="Entities\FAQCategory\Aggregates\" />
+	  <Folder Include="Entities\FAQCategory\Events\" />
+	  <Folder Include="Entities\FAQ\Events\" />
+	  <Folder Include="Entities\Location\Aggregates\" />
+	  <Folder Include="Entities\Location\Events\" />
+	  <Folder Include="Entities\School\Criteria\" />
+	  <Folder Include="Entities\School\Events\" />
+	  <Folder Include="Entities\School\Specifications\" />
+	</ItemGroup>
+	
+</Project>
