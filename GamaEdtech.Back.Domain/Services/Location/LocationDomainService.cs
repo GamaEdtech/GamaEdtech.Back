@@ -12,13 +12,6 @@ namespace GamaEdtech.Back.Domain.Services.Location
     public class LocationDomainService(ILocationRepository locationRepository)
         : ILocationDomainService, IScopedDependency
     {
-        public Task<bool> LocationIsExists(GeographicCoordinates coordinates, CancellationToken cancellationToken)
-        {
-            return locationRepository.AnyAsync(new GetLocationByDynamicFilterSpecification(new GetLocationByDynamicFilterRequest
-            {
-                Coordinates = coordinates,
-            }), cancellationToken);
-        }
         public async Task<IEnumerable<LocationResponse>> GetLocationByDynamicFilter(GetLocationByDynamicFilterRequest req, CancellationToken cancellationToken)
         {
             var locations = await locationRepository.ListAsync
