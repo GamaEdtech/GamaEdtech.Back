@@ -20,6 +20,15 @@ namespace GamaEdtech.Back.Domain.Entities.Location.Valueobjects
             return new GeographicCoordinates(point.Y, point.X);
         }
 
+        public double Distance(GeographicCoordinates coordinates)
+        {
+            return ToPoint().Distance(coordinates.ToPoint());
+        }
+
+        public bool EqualsExact(GeographicCoordinates coordinates)
+        {
+            return ToPoint().EqualsExact(coordinates.ToPoint());
+        }
 
         public override bool Equals(object obj)
         {
@@ -55,5 +64,4 @@ namespace GamaEdtech.Back.Domain.Entities.Location.Valueobjects
             return !(left == right);
         }
     }
-
 }
