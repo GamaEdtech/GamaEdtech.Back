@@ -25,8 +25,8 @@ namespace GamaEdtech.Back.Domain.Services.Location
 
             var existsLocations = await GetLocationByDynamicFilter(new GetLocationByDynamicFilterRequest
             {
-                Coordinates = coordinates,
-                Radius = 2000
+                //Coordinates = coordinates,
+                //Radius = 2000
             }, cancellationToken);
 
             if (existsLocations.Any())
@@ -37,7 +37,16 @@ namespace GamaEdtech.Back.Domain.Services.Location
             var newLocation = Create(req.Title, req.LatinTitle, req.Code, req.LocationType,
                coordinates, parent);
 
-            await locationRepository.AddAsync(newLocation, cancellationToken);
+            newLocation.CaptureOriginalValues();
+            try
+            {
+                var result = await locationRepository.AddAsync(newLocation, cancellationToken);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
             return newLocation.MapToResponse();
         }
 

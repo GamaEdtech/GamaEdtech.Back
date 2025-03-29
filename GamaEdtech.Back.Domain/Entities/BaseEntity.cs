@@ -40,7 +40,17 @@ namespace GamaEdtech.Back.Domain.Entities
                 .Where(p => p.CanRead && p.CanWrite && p.Name != nameof(Versions));
             foreach (var property in properties)
             {
-                _originalValues[property.Name] = property.GetValue(this);
+                var value = property.GetValue(this);
+
+                if (value != null && IsComplexType(property.PropertyType))
+                {
+                    var complexValues = GetComplexTypeValues(value);
+                    _originalValues[property.Name] = complexValues;
+                }
+                else
+                {
+                    _originalValues[property.Name] = value;
+                }
             }
         }
 
@@ -55,14 +65,28 @@ namespace GamaEdtech.Back.Domain.Entities
                 var originalValue = _originalValues.TryGetValue(property.Name, out object? value) ? value : null;
                 var currentValue = property.GetValue(this);
 
-                if (!Equals(originalValue, currentValue))
+                if (IsComplexType(property.PropertyType))
                 {
-                    _versions.Add(EntityVersion.EntityVersion
-                        .Create((Guid)(object)Id, GetType().Name, currentUserId,
-                        property.Name, originalValue?.ToString(), currentValue?.ToString()));
+                    var originalComplexValues = originalValue != null ? GetComplexTypeValues(originalValue) : null;
+                    var currentComplexValues = currentValue != null ? GetComplexTypeValues(currentValue) : null;
 
-                    // Update original Value
-                    _originalValues[property.Name] = currentValue;
+                    if (!AreDictionariesEqual(originalComplexValues, currentComplexValues))
+                    {
+                        _versions.Add(EntityVersion.EntityVersion
+                            .Create((Guid)(object)Id, GetType().Name, currentUserId,
+                            property.Name, SerializeComplexType(originalComplexValues), SerializeComplexType(currentComplexValues)));
+                    }
+                }
+                else
+                {
+                    if (!Equals(originalValue, currentValue))
+                    {
+                        _versions.Add(EntityVersion.EntityVersion
+                            .Create((Guid)(object)Id, GetType().Name, currentUserId,
+                            property.Name, originalValue?.ToString(), currentValue?.ToString()));
+
+                        _originalValues[property.Name] = currentValue;
+                    }
                 }
             }
         }
@@ -81,6 +105,58 @@ namespace GamaEdtech.Back.Domain.Entities
         }
         #endregion
 
+        #region Helpers
+        /// <summary>
+        /// Determines if a type is a complex type (not a primitive or string).
+        /// </summary>
+        private bool IsComplexType(Type type)
+        {
+            return !(type.IsPrimitive || type == typeof(string) || type == typeof(decimal));
+        }
+
+        /// <summary>
+        /// Recursively captures values of a complex object.
+        /// </summary>
+        private Dictionary<string, object> GetComplexTypeValues(object complexObject)
+        {
+            var result = new Dictionary<string, object>();
+            var properties = complexObject.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && p.CanWrite);
+
+            foreach (var property in properties)
+            {
+                var value = property.GetValue(complexObject);
+
+                if (value != null && IsComplexType(property.PropertyType))
+                {
+                    // Recursive call for nested complex types
+                    result[property.Name] = GetComplexTypeValues(value);
+                }
+                else
+                {
+                    // Store simple values directly
+                    result[property.Name] = value;
+                }
+            }
+
+            return result;
+        }
+
+        private bool AreDictionariesEqual(Dictionary<string, object>? dict1, Dictionary<string, object>? dict2)
+        {
+            if (dict1 == null && dict2 == null) return true;
+            if (dict1 == null || dict2 == null) return false;
+            if (dict1.Count != dict2.Count) return false;
+
+            return dict1.All(kvp => dict2.ContainsKey(kvp.Key) && Equals(kvp.Value, dict2[kvp.Key]));
+        }
+        private string SerializeComplexType(Dictionary<string, object>? complexValues)
+        {
+            return complexValues == null
+                ? string.Empty
+                : string.Join(", ", complexValues.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+        }
+        #endregion
     }
 
     public abstract class BaseEntity : BaseEntity<Guid>

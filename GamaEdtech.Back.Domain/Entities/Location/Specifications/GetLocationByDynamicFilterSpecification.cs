@@ -10,16 +10,20 @@ namespace GamaEdtech.Back.Domain.Entities.Location.Specifications
     {
         private readonly GetLocationByDynamicFilterRequest _req;
 
+        public GetLocationByDynamicFilterSpecification()
+        {
+            _req = new GetLocationByDynamicFilterRequest();
+        }
         public GetLocationByDynamicFilterSpecification(GetLocationByDynamicFilterRequest req)
         {
             _req = req;
-            Query.Where(Criteria().ToExpression());
+            Query.Where(req.HasValue() ? Criteria().ToExpression() : c => false);
         }
         protected override CriteriaSpecification<Location> Criteria()
         {
             return new CheckLocationByLocationTypeCriteria(_req.LocationType)
                 .And(new CheckLocationByCodeCriteria(_req.Code))
-                .And(new CheckLocationByRadiusCriteria(_req.Coordinates, _req.Radius))
+                //.And(new CheckLocationByRadiusCriteria(_req.Coordinates, _req.Radius))
                 //.And(new CheckLocationByCoordinateCriteria(_req.Coordinates))
                 .And(new CheckLocationByTitleCriteria(_req.Title, _req.LatinTitle))
                 .And(new CheckLocationByIdCriteria(_req.LocationId));

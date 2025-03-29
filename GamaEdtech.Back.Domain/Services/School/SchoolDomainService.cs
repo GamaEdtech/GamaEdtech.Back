@@ -14,6 +14,7 @@ namespace GamaEdtech.Back.Domain.Services.School
                 createSchoolRequest.OsmId, createSchoolRequest.Name,
                 createSchoolRequest.Address, createSchoolRequest.LocationId);
 
+            school.CaptureOriginalValues();
             await schoolRepository.AddAsync(school, cancellationToken);
             return school.MapToResponse();
         }

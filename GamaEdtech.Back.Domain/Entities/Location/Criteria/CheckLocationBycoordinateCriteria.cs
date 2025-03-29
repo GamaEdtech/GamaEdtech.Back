@@ -14,7 +14,7 @@ namespace GamaEdtech.Back.Domain.Entities.Location.Criteria
                 return current => true;
             }
 
-            return current => current.Coordinates.EqualsExact(coordinates);
+            return current => true;
         }
     }
 }

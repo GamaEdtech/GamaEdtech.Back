@@ -18,7 +18,7 @@ namespace GamaEdtech.Back.Infrastructure.EntityConfigurations.SchoolConfiguratio
 
             builder.Property(prop => prop.LocalName)
                .HasMaxLength(100)
-               .IsRequired();
+               .IsRequired(false);
 
             builder.Property(prop => prop.SchoolType)
              .IsRequired();

@@ -9,7 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="MediatR" Version="12.4.0" />
 		<PackageReference Include="Ardalis.Specification" Version="8.0.0" />
-		<PackageReference Include="Mapster" Version="7.4.1-pre01" />
+			<PackageReference Include="Mapster" Version="7.4.1-pre01" />
 		<PackageReference Include="NetTopologySuite" Version="2.6.0" />
 		<PackageReference Include="Pluralize.NET" Version="1.0.2" />
 	</ItemGroup>

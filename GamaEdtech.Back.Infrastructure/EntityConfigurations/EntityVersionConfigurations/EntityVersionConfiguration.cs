@@ -21,10 +21,12 @@ namespace GamaEdtech.Back.Infrastructure.EntityConfigurations.EntityVersionConfi
                 .HasMaxLength(200).IsRequired();
 
             builder.Property(prop => prop.OldValue)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(prop => prop.NewValue)
             .IsRequired();
+
+            builder.Ignore(e => e.Versions);
         }
     }
 }

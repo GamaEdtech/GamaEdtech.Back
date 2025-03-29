@@ -66,8 +66,8 @@ namespace GamaEdtech.Back.Infrastructure.DbContexts.Sql.SqlServer
                 int affectedRows = await base.SaveChangesAsync(cancellationToken);
                 if (affectedRows > 0)
                 {
-                    await PublishEventsAsync(cancellationToken);
                     ApplyVersions();
+                    await PublishEventsAsync(cancellationToken);
                 }
 
                 return affectedRows;
@@ -133,7 +133,7 @@ namespace GamaEdtech.Back.Infrastructure.DbContexts.Sql.SqlServer
         private void ApplyVersions()
         {
             var entitiesHaveChanges = ChangeTracker.Entries<BaseEntity>()
-              .Where(entry => entry.State is EntityState.Modified or EntityState.Added)
+              .Where(entry => entry.State is EntityState.Modified or EntityState.Added && entry.Entity is not EntityVersion)
               .Select(entry => entry.Entity)
               .ToList();
 
